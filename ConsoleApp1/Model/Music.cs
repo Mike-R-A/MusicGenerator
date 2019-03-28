@@ -46,37 +46,41 @@ namespace ConsoleApp1.Model
             return chord;
         }
 
-        public static Motif Motif(int length, int maxSize, int stasisInhibitor = 5)
+        public static Motif Motif(int length, int maxSize, int stasisInhibitor = 5, double restChance = 0.01)
         {
             var motif = new Motif();
             var randomIntGenerator = new Random();
-            var randomPitch = randomIntGenerator.Next(0, maxSize);
+            var addRest = randomIntGenerator.Next(0, (int)(1 / restChance));
+            var randomPitch = addRest == 1 ? -1 : randomIntGenerator.Next(0, maxSize);
             var previousDirection = randomIntGenerator.Next(-1, 2);
             var nextIndex = randomPitch;
-            var startIndex = nextIndex;
-            motif.Pitches.Add(startIndex);
+            int lastIndex = randomPitch;
+            motif.Pitches.Add(nextIndex);
             motif.Rhythm.Add(RandomNoteLength());
             for (var i = 0; i < length; i++)
             {
-                var lastIndex = nextIndex;
-                var direction = randomIntGenerator.Next(-1, 2);
-                for (var j = 0; j < stasisInhibitor; j++)
+                if (nextIndex != -1)
                 {
-                    if (direction == 0 || direction != previousDirection)
+                    lastIndex = nextIndex;
+                    var direction = randomIntGenerator.Next(-1, 2);
+                    for (var j = 0; j < stasisInhibitor; j++)
                     {
-                        direction = randomIntGenerator.Next(-1, 2);
+                        if (direction == 0 || direction != previousDirection)
+                        {
+                            direction = randomIntGenerator.Next(-1, 2);
+                        }
                     }
+                    var potentialNextIndex = lastIndex + direction;
+                    previousDirection = direction;
+                    while (potentialNextIndex < 0 || potentialNextIndex > maxSize)
+                    {
+                        var newDirection = randomIntGenerator.Next(-1, 2);
+                        potentialNextIndex = nextIndex + newDirection;
+                    }
+                    addRest = randomIntGenerator.Next(0, (int)(1 / restChance));
+                    nextIndex = restChance == 1 ? -1 : potentialNextIndex;
                 }
-
-                previousDirection = direction;
-                var potentialNextIndex = lastIndex + direction;
-                while (potentialNextIndex < 0 || potentialNextIndex > maxSize)
-                {
-                    var newDirection = randomIntGenerator.Next(-1, 2);
-                    potentialNextIndex = nextIndex + newDirection;
-                }
-
-                nextIndex = potentialNextIndex;
+                
                 motif.Pitches.Add(nextIndex);
                 motif.Rhythm.Add(RandomNoteLength());
             }
@@ -133,7 +137,7 @@ namespace ConsoleApp1.Model
         public static Motif MakeChordal(this Motif motif)
         {
             var chordalMotif = new Motif();
-            chordalMotif.Pitches = motif.Pitches.Select(i => i * 2).ToList();
+            chordalMotif.Pitches = motif.Pitches.Select(i => i == -1 ? i : i * 2).ToList();
             chordalMotif.Rhythm = motif.Rhythm.Select(i => i).ToList();
 
             return chordalMotif;
@@ -141,7 +145,7 @@ namespace ConsoleApp1.Model
 
         public static List<int> Transpose(this List<int> motif, int amount)
         {
-            return motif.Select(i => i + amount).ToList();
+            return motif.Select(i => i == -1 ? i : i + amount).ToList();
         }
 
         public static Motif Concatenate(this Motif motif1, Motif motif2)
@@ -216,19 +220,24 @@ namespace ConsoleApp1.Model
         {
             int start = startIndex ?? motif.Pitches[0];
             var translatedMotif = new Motif();
-            translatedMotif.Pitches = motif.Pitches.Select(i => i - motif.Pitches[0] + start + startOctave * key.Count).ToList();
-            while (translatedMotif.Pitches.Min() < 0)
-            {
-                translatedMotif.Pitches = translatedMotif.Pitches.Select(i => i + motif.Pitches.Count).ToList();
-            }
+            var translationAmount = start + startOctave * key.Count - motif.Pitches[0];
+            translatedMotif.Pitches = motif.Pitches.Select(i => i == -1 || i + translationAmount < 0 ? i : i + translationAmount).ToList();
             var appliedMotif = new List<Tone>();
             var octaves = 100;
             var keyRange = key.KeyRange(octaves);
             for (int i = 0; i < translatedMotif.Pitches.Count; i++)
             {
                 var tone = new Tone();
-                tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
-                tone.Octave = keyRange[translatedMotif.Pitches[i]].Octave;
+                if (translatedMotif.Pitches[i] == -1)
+                {
+                    tone.Note = Note.Rest;
+                    tone.Octave = null;
+                }
+                else
+                {
+                    tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
+                    tone.Octave = keyRange[translatedMotif.Pitches[i]].Octave;
+                }
                 tone.Length = (double)motif.Rhythm[i];
                 appliedMotif.Add(tone);
             }
