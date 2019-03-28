@@ -86,24 +86,40 @@ namespace ConsoleApp1.Model
 
         public static NoteLength RandomNoteLength()
         {
-            const int noOfNoteLengths = 3;
+            const int noOfNoteLengths = 8;
             var randomIntGenerator = new Random();
             var randomNoteLengthSelector = randomIntGenerator.Next(0, noOfNoteLengths);
             switch (randomNoteLengthSelector)
             {
                 case 0:
                 {
-                    return NoteLength.Minim;
+                    return NoteLength.Semibreve;
                 }
                 case 1:
                 {
-                    return NoteLength.Crotchet;
+                    return NoteLength.DottedMinim;
                 }
                 case 2:
                 {
-                    return NoteLength.Quaver;
+                    return NoteLength.Minim;
                 }
                 case 3:
+                {
+                    return NoteLength.DottedCrotchet;
+                }
+                case 4:
+                {
+                    return NoteLength.Crotchet;
+                }
+                case 5:
+                {
+                    return NoteLength.DottedQuaver;
+                }
+                case 6:
+                {
+                    return NoteLength.Quaver;
+                }
+                case 7:
                 {
                     return NoteLength.SemiQuaver;
                 }

@@ -178,7 +178,7 @@ namespace MusicGenerator
                     tone.Play(tone.Length);
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep((int)NoteLength.Crotchet);
                 Console.WriteLine();
             }
 
