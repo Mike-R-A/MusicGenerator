@@ -17,7 +17,8 @@ namespace ConsoleApp1.Model
         F,
         FsharpGflat,
         G,
-        GsharpAflat
+        GsharpAflat,
+        Rest
     }
 
     public enum NoteLength

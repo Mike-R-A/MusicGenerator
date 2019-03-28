@@ -223,7 +223,14 @@ namespace ConsoleApp1.Model
 
         public static void Play(this Tone tone, double milliseconds)
         {
-             Play(FrequencyByTone(tone), milliseconds);
+            if (tone.Note == Note.Rest)
+            {
+                Thread.Sleep((int)tone.Length);
+            }
+            else
+            {
+                Play(FrequencyByTone(tone), milliseconds);
+            }
         }
         
     }
