@@ -75,9 +75,9 @@ namespace MusicGenerator
 
             var randomIntGenerator = new Random();
 
-            for (var i = 0; i < 10; i++)
+            for (var i = 0; i < 4; i++)
             {
-                var randomLength = randomIntGenerator.Next(1, 6);
+                var randomLength = randomIntGenerator.Next(1, 10);
                 Console.WriteLine("Motif Length, " + randomLength);
                 var randomMaxSize = randomIntGenerator.Next(1, 12);
                 Console.WriteLine("Motif Max Size, " + randomMaxSize);
@@ -137,13 +137,18 @@ namespace MusicGenerator
             }
 
             var phrases = new List<List<Tone>>();
+            var timeSignature = new TimeSignature
+            {
+                Beats = 4,
+                BeatType = NoteLength.Crotchet
+            };
 
             for (var i = 0; i < motifs.Count; i++)
             {
                 var randomInt1 = randomIntGenerator.Next(0, motifs.Count);
                 var randomInt2 = randomIntGenerator.Next(0, motifs.Count);
                 var alterChance = 1 / (double)(randomIntGenerator.Next(1, 10));
-                var phrase = keys[0].DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, alterChance: alterChance);
+                var phrase = keys[0].DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, timeSignature, alterChance: alterChance);
                 phrases.Add(phrase);
             }
 
@@ -181,10 +186,6 @@ namespace MusicGenerator
                     Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
                     tone.Play(tone.Length);
                 }
-                
-                var totalLength = phrase.Select(t => t.Length).Sum();
-                Thread.Sleep((int)NoteLength.Crotchet);
-                Console.WriteLine(totalLength + " milliseconds");
             }
 
             //Console.WriteLine();

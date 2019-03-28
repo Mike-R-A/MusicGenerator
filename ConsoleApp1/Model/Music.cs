@@ -238,14 +238,14 @@ namespace ConsoleApp1.Model
                     tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
                     tone.Octave = keyRange[translatedMotif.Pitches[i]].Octave;
                 }
-                tone.Length = (double)motif.Rhythm[i];
+                tone.Length = motif.Rhythm[i];
                 appliedMotif.Add(tone);
             }
 
             return appliedMotif;
         }
 
-        public static List<Tone> DevelopMotif(this List<Note> key, Motif motif, List<int> startIndexes, int startOctave = 4, double alterChance = 0.5)
+        public static List<Tone> DevelopMotif(this List<Note> key, Motif motif, List<int> startIndexes, TimeSignature timeSignature, int startOctave = 4, double alterChance = 0.5)
         {
             var phrase = new List<Tone>();
             var randomIntGenerator = new Random();
@@ -262,7 +262,64 @@ namespace ConsoleApp1.Model
                 {
                     altered = motif;
                 }
-                phrase.AddRange(key.ApplyMotif(altered, startIndex, startOctave));
+
+                var addition = key.ApplyMotif(altered, startIndex, startOctave);
+                phrase.AddRange(addition);
+            }
+
+            var totalTime = phrase.Sum(t => (double)t.Length);
+            var singleBarTime = timeSignature.Beats * (double) timeSignature.BeatType;
+            var remainder = totalTime % singleBarTime;
+            var endRestTime = singleBarTime - remainder;
+            while (endRestTime > (double)NoteLength.Semibreve)
+            {
+                phrase.Add(new Tone
+                {
+                    Note = Note.Rest,
+                    Length = NoteLength.Semibreve,
+                    Octave = null
+                });
+                endRestTime = endRestTime - (double)NoteLength.Semibreve;
+            }
+            while (endRestTime > (double)NoteLength.Minim)
+            {
+                phrase.Add(new Tone
+                {
+                    Note = Note.Rest,
+                    Length = NoteLength.Minim,
+                    Octave = null
+                });
+                endRestTime = endRestTime - (double)NoteLength.Minim;
+            }
+            while (endRestTime > (double)NoteLength.Crotchet)
+            {
+                phrase.Add(new Tone
+                {
+                    Note = Note.Rest,
+                    Length = NoteLength.Crotchet,
+                    Octave = null
+                });
+                endRestTime = endRestTime - (double)NoteLength.Crotchet;
+            }
+            while (endRestTime > (double)NoteLength.Quaver)
+            {
+                phrase.Add(new Tone
+                {
+                    Note = Note.Rest,
+                    Length = NoteLength.Quaver,
+                    Octave = null
+                });
+                endRestTime = endRestTime - (double)NoteLength.Quaver;
+            }
+            while (endRestTime > (double)NoteLength.SemiQuaver)
+            {
+                phrase.Add(new Tone
+                {
+                    Note = Note.Rest,
+                    Length = NoteLength.SemiQuaver,
+                    Octave = null
+                });
+                endRestTime = endRestTime - (double)NoteLength.SemiQuaver;
             }
 
             return phrase;

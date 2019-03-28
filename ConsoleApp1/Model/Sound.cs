@@ -221,7 +221,7 @@ namespace ConsoleApp1.Model
             }
         }
 
-        public static void Play(this Tone tone, double milliseconds)
+        public static void Play(this Tone tone, NoteLength noteLength)
         {
             if (tone.Note == Note.Rest)
             {
@@ -229,7 +229,7 @@ namespace ConsoleApp1.Model
             }
             else
             {
-                Play(FrequencyByTone(tone), milliseconds);
+                Play(FrequencyByTone(tone), (double)noteLength);
             }
         }
         

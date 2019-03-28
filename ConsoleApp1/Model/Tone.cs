@@ -8,7 +8,7 @@ namespace ConsoleApp1.Model
     {
         public Note Note { get; set; }
         public int? Octave { get; set; }
-        public double Length { get; set; }
+        public NoteLength Length { get; set; }
         public string Id => Note.ToString() + Octave.ToString();
     }
 }
