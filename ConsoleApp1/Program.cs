@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using ConsoleApp1.Model;
 
@@ -76,11 +77,14 @@ namespace MusicGenerator
 
             for (var i = 0; i < 10; i++)
             {
-                var randomLength = randomIntGenerator.Next(1, 10);
+                var randomLength = randomIntGenerator.Next(1, 6);
+                Console.WriteLine("Motif Length, " + randomLength);
                 var randomMaxSize = randomIntGenerator.Next(1, 12);
-                var randomStasisInhibitor = randomIntGenerator.Next(0, 3);
+                Console.WriteLine("Motif Max Size, " + randomMaxSize);
+                var randomStasisInhibitor = randomIntGenerator.Next(0, 5);
+                Console.WriteLine("Motif Stasis Inhibitor, " + randomStasisInhibitor);
+                var motif = Music.Motif(randomLength, randomMaxSize, randomStasisInhibitor);
 
-                var motif = Music.Motif(randomLength, randomMaxSize);
                 var alteredMotif1 = motif.ModifyMotif(motifs);
                 var alteredMotif2 = motif.ModifyMotif(motifs);
                 var chordalMotif1 = motif.MakeChordal();
@@ -177,9 +181,10 @@ namespace MusicGenerator
                     Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
                     tone.Play(tone.Length);
                 }
-
+                
+                var totalLength = phrase.Select(t => t.Length).Sum();
                 Thread.Sleep((int)NoteLength.Crotchet);
-                Console.WriteLine();
+                Console.WriteLine(totalLength + " milliseconds");
             }
 
             //Console.WriteLine();
