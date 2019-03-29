@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Xml.Xsl;
 using ConsoleApp1.Model;
 
 namespace MusicGenerator
@@ -39,46 +40,67 @@ namespace MusicGenerator
             }
 
             var keys = new List<List<Note>>();
-            keys.Add(Key.Major(Note.C));
+            keys.Add(Key.Major(Note.DsharpEflat));
             keys.Add(Key.MinorHarmonic(Note.C));
-
-            var phrases = new List<List<Tone>>();
-            var timeSignature = new TimeSignature
+            keys.Add(Key.Major(Note.GsharpAflat));
+            keys.Add(Key.MinorHarmonic(Note.F));
+            keys.Add(Key.Major(Note.CsharpDflat));
+            keys.Add(Key.MinorHarmonic(Note.AsharpBflat));
+            keys.Add(Key.Major(Note.E));
+            keys.Add(Key.MinorHarmonic(Note.DsharpEflat));
+            string command = "";
+            while (command != "q")
             {
-                Beats = 4,
-                BeatType = NoteLength.Crotchet
-            };
-
-            for (var i = 0; i < motifs.Count; i++)
-            {
-                var randomInt1 = randomIntGenerator.Next(0, motifs.Count);
-                var randomInt2 = randomIntGenerator.Next(0, motifs.Count);
-                var alterChance = 1 / (double)(randomIntGenerator.Next(1, 10));
-                var phrase = keys[0].DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, timeSignature, alterChance: alterChance);
-                phrases.Add(phrase);
-            }
-
-            Console.WriteLine();
-            Console.WriteLine("Scale Phrases");
-            Console.WriteLine();
-
-            var phraseLengthOfSection = 8;
-
-            for (var i = 0; i < phraseLengthOfSection; i++)
-            {
-                var randomPhraseIndex = randomIntGenerator.Next(0, phrases.Count);
-                Console.WriteLine();
-                Console.WriteLine("Phrase");
-                Console.WriteLine();
-                foreach (var tone in phrases[randomPhraseIndex])
+                var allPhrases = new List<List<Tone>>();
+                foreach (var key in keys)
                 {
-                    Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
-                    tone.Play();
+                    var phrases = new List<List<Tone>>();
+                    var timeSignature = new TimeSignature
+                    {
+                        Beats = 4,
+                        BeatType = NoteLength.Crotchet
+                    };
+
+                    for (var i = 0; i < motifs.Count; i++)
+                    {
+                        var randomInt1 = randomIntGenerator.Next(0, motifs.Count);
+                        var randomInt2 = randomIntGenerator.Next(0, motifs.Count);
+                        var alterChance = 1 / (double)(randomIntGenerator.Next(1, 10));
+                        var phrase = key.DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, timeSignature, alterChance: alterChance);
+                        phrases.Add(phrase);
+                    }
+
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine("Section");
+                    Console.WriteLine();
+
+                    var phraseLengthOfSection = 4;
+
+                    for (var i = 0; i < phraseLengthOfSection; i++)
+                    {
+                        Console.Write(" | ");
+                        //var randomPhraseIndex = randomIntGenerator.Next(0, phrases.Count);
+                        foreach (var tone in phrases[i])
+                        {
+                            Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
+                            tone.Play();
+                        }
+                    }
+                    Console.Write(" | ");
+                    foreach (var tone in phrases[0])
+                    {
+                        Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
+                        tone.Play();
+                    }
+
+                    Console.Write(" || ");
+                    allPhrases.AddRange(phrases);
                 }
+
+                command = Console.ReadLine();
+
             }
-
-
-            Console.ReadLine();
         }
     }
 }

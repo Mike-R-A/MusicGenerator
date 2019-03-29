@@ -1,12 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading;
-using System.Xml.XPath;
-using NAudio.Mixer;
 
 namespace ConsoleApp1.Model
 {
@@ -237,8 +231,10 @@ namespace ConsoleApp1.Model
                 }
                 else
                 {
+                    var octave = keyRange[translatedMotif.Pitches[i]].Octave;
+                    var octaveToUse = octave <= Sound.MaxOctave ? octave : octave - 1;
                     tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
-                    tone.Octave = keyRange[translatedMotif.Pitches[i]].Octave;
+                    tone.Octave = octave;
                 }
                 tone.Length = motif.Rhythm[i];
                 appliedMotif.Add(tone);
@@ -280,7 +276,7 @@ namespace ConsoleApp1.Model
                 var singleBarTime = timeSignature.Beats * (double)timeSignature.BeatType;
                 if (timeUpToThisTone % singleBarTime == 0)
                 {
-                    phrase[i].Volume = 0.25;
+                    phrase[i].Volume = 0.3;
                 }
                 else
                 {
