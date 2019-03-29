@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
+using NAudio.Mixer;
 
 namespace ConsoleApp1.Model
 {
@@ -245,7 +246,7 @@ namespace ConsoleApp1.Model
             return appliedMotif;
         }
 
-        public static List<Tone> DevelopMotif(this List<Note> key, Motif motif, List<int> startIndexes, TimeSignature timeSignature, int startOctave = 4, double alterChance = 0.5)
+        public static List<Tone> DevelopMotif(this List<Note> key, Motif motif, List<int> startIndexes, TimeSignature timeSignature, int maxBars = 8, int startOctave = 4, double alterChance = 0.5)
         {
             var phrase = new List<Tone>();
             var randomIntGenerator = new Random();
@@ -264,12 +265,26 @@ namespace ConsoleApp1.Model
                 }
 
                 var addition = key.ApplyMotif(altered, startIndex, startOctave);
-                phrase.AddRange(addition);
+                var timeWithAddition = phrase.TotalTime() + addition.TotalTime();
+                var maxTime = maxBars * timeSignature.BarTime;
+                if (timeWithAddition < maxTime)
+                {
+                    phrase.AddRange(addition);
+                }
+                else
+                {
+                    phrase.PadWithRests(timeSignature);
+                    return phrase;
+                }
             }
+            phrase.PadWithRests(timeSignature);
+            return phrase;
+        }
 
-            var totalTime = phrase.Sum(t => (double)t.Length);
-            var singleBarTime = timeSignature.Beats * (double) timeSignature.BeatType;
-            var remainder = totalTime % singleBarTime;
+        private static void PadWithRests(this List<Tone> phrase, TimeSignature timeSignature)
+        {
+            var singleBarTime = timeSignature.Beats * (double)timeSignature.BeatType;
+            var remainder = phrase.TotalTime() % singleBarTime;
             var endRestTime = singleBarTime - remainder;
             while (endRestTime > (double)NoteLength.Semibreve)
             {
@@ -321,8 +336,11 @@ namespace ConsoleApp1.Model
                 });
                 endRestTime = endRestTime - (double)NoteLength.SemiQuaver;
             }
+        }
 
-            return phrase;
+        public static double TotalTime(this List<Tone> phrase)
+        {
+            return phrase.Sum(t => (double)t.Length);
         }
     }
 }

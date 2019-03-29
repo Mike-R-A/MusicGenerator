@@ -8,5 +8,6 @@ namespace ConsoleApp1.Model
     {
         public int Beats { get; set; }
         public NoteLength BeatType { get; set; }
+        public double BarTime => Beats * (double) BeatType;
     }
 }
