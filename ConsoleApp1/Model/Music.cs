@@ -245,7 +245,6 @@ namespace ConsoleApp1.Model
                     {
                         octaveToUse = octave;
                     }
-                    octaveToUse = octave >= Sound.MinOctave ? octave : octave + 1;
                     tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
                     tone.Octave = octaveToUse;
                 }
