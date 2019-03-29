@@ -65,8 +65,28 @@ namespace MusicGenerator
                     {
                         var randomInt1 = randomIntGenerator.Next(0, motifs.Count);
                         var randomInt2 = randomIntGenerator.Next(0, motifs.Count);
+                        var randomBarLength = randomIntGenerator.Next(0, 3);
+                        int maxBarLength = 0;
+                        switch (randomBarLength)
+                        {
+                            case 0:
+                            {
+                                maxBarLength = 2;
+                                break;
+                            }
+                            case 1:
+                            {
+                                maxBarLength = 4;
+                                break;
+                            }
+                            case 2:
+                            {
+                                maxBarLength = 8;
+                                break;
+                            }
+                        }
                         var alterChance = 1 / (double)(randomIntGenerator.Next(1, 10));
-                        var phrase = key.DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, timeSignature, startOctave: 4, maxBars: 4, alterChance: alterChance);
+                        var phrase = key.DevelopMotif(motifs[randomInt1], motifs[randomInt2].Pitches, timeSignature, startOctave: 4, maxBars: maxBarLength, alterChance: alterChance);
                         phrases.Add(phrase);
                     }
 

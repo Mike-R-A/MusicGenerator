@@ -232,7 +232,20 @@ namespace ConsoleApp1.Model
                 else
                 {
                     var octave = keyRange[translatedMotif.Pitches[i]].Octave;
-                    var octaveToUse = octave <= Sound.MaxOctave ? octave : octave - 1;
+                    int? octaveToUse;
+                    if (octave < Sound.MinOctave)
+                    {
+                        octaveToUse = octave + 1;
+                    }
+                    else if (octave > Sound.MaxOctave)
+                    {
+                        octaveToUse = octave + 1;
+                    }
+                    else
+                    {
+                        octaveToUse = octave;
+                    }
+                    octaveToUse = octave >= Sound.MinOctave ? octave : octave + 1;
                     tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
                     tone.Octave = octaveToUse;
                 }

@@ -10,6 +10,7 @@ namespace ConsoleApp1.Model
     public static class Sound
     {
         public const int MaxOctave = 6;
+        public const int MinOctave = 2;
         public static double FrequencyByTone(Tone tone)
         {
             var lookup = new Dictionary<string, double>
