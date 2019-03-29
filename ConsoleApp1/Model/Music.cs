@@ -5,6 +5,7 @@ using System.Net.NetworkInformation;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
+using System.Xml.XPath;
 using NAudio.Mixer;
 
 namespace ConsoleApp1.Model
@@ -271,13 +272,23 @@ namespace ConsoleApp1.Model
                 {
                     phrase.AddRange(addition);
                 }
+            }
+
+            for (int i = 0; i < phrase.Count; i++)
+            {
+                var timeUpToThisTone = phrase.Take(i).ToList().TotalTime();
+                var singleBarTime = timeSignature.Beats * (double)timeSignature.BeatType;
+                if (timeUpToThisTone % singleBarTime == 0)
+                {
+                    phrase[i].Volume = 0.25;
+                }
                 else
                 {
-                    phrase.PadWithRests(timeSignature);
-                    return phrase;
+                    phrase[i].Volume = 0.2;
                 }
             }
             phrase.PadWithRests(timeSignature);
+
             return phrase;
         }
 

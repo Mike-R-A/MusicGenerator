@@ -201,11 +201,11 @@ namespace ConsoleApp1.Model
 
             return lookup[tone.Id];
         }
-        public static void Play(double frequency, double milliseconds = 400)
+        public static void Play(double frequency, double milliseconds = 400, double gain = 0.2)
         {
             var sineMilliseconds = new SignalGenerator()
                 {
-                    Gain = 0.2,
+                    Gain = gain,
                     Frequency = frequency,
                     Type = SignalGeneratorType.Sin
                 }
@@ -221,7 +221,7 @@ namespace ConsoleApp1.Model
             }
         }
 
-        public static void Play(this Tone tone, NoteLength noteLength)
+        public static void Play(this Tone tone)
         {
             if (tone.Note == Note.Rest)
             {
@@ -229,7 +229,7 @@ namespace ConsoleApp1.Model
             }
             else
             {
-                Play(FrequencyByTone(tone), (double)noteLength);
+                Play(FrequencyByTone(tone), (double)tone.Length, tone.Volume);
             }
         }
         

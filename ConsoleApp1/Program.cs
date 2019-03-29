@@ -11,66 +11,6 @@ namespace MusicGenerator
     {
         static void Main(string[] args)
         {
-            var tonic = Note.C;
-            Console.WriteLine("Music Generator");
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Scale");
-            Console.WriteLine();
-
-            var key = Key.MinorHarmonic(tonic);
-
-            key.ForEach(n =>
-            {
-                Console.WriteLine(n.ToString());
-            });
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Chord");
-            Console.WriteLine();
-
-            var chord = key.Chord(5, 4);
-
-            chord.ForEach(n =>
-            {
-                Console.WriteLine(n.ToString());
-            });
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Mode");
-            Console.WriteLine();
-
-            var mix = Key.Mode(Key.Major(tonic), 5);
-            var mixChord = mix.Chord(1, 4);
-            var mixinv = Key.Mode(mixChord, 4);
-
-            Console.WriteLine();
-            Console.WriteLine("Inversion");
-            mixinv.ForEach(n =>
-            {
-                Console.WriteLine(n.ToString());
-            });
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Key Range");
-            Console.WriteLine();
-
-            var keyRange = Key.KeyRange(mix, 2);
-
-            keyRange.ForEach(n =>
-            {
-                Console.WriteLine(n.Note.ToString() + " " + n.Octave.ToString());
-            });
-
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("Motifs");
-            Console.WriteLine();
-
             var motifs = new List<Motif>();
 
             var randomIntGenerator = new Random();
@@ -100,41 +40,7 @@ namespace MusicGenerator
 
             var keys = new List<List<Note>>();
             keys.Add(Key.Major(Note.C));
-            //keys.Add(Key.Major(Note.C).Mode(2));
-            //keys.Add(Key.Major(Note.C).Mode(3));
-            //keys.Add(Key.MinorHarmonic(Note.F).Chord(1, 4));
-            //keys.Add(Key.MinorHarmonic(Note.F).Chord(1, 4).Mode(2));
-            //keys.Add(Key.MinorHarmonic(Note.F).Chord(1, 4).Mode(3));
-            //keys.Add(Key.Major(Note.D));
-
-            foreach (var motif in motifs)
-            {
-                Console.WriteLine();
-                Console.WriteLine();
-                Console.WriteLine("Next Motif");
-                foreach (var k in keys)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine("Next Key");
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    for (var i = 0; i < motif.Pitches.Count; i++)
-                    {
-                        Console.Write((motif.Pitches[i]+1).ToString() + " ");
-                    }
-                    Console.WriteLine();
-
-                    var appliedMotif = k.ApplyMotif(motif);
-
-                    foreach (var tone in appliedMotif)
-                    {
-                        Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
-                    }
-
-                    Console.WriteLine();
-                }
-            }
+            keys.Add(Key.MinorHarmonic(Note.C));
 
             var phrases = new List<List<Tone>>();
             var timeSignature = new TimeSignature
@@ -152,58 +58,24 @@ namespace MusicGenerator
                 phrases.Add(phrase);
             }
 
-
-            //var phrases1 = new List<List<Tone>>();
-
-            //for (var i = 0; i < motifs.Count; i++)
-            //{
-            //    var randomInt1 = randomIntGenerator.Next(0, motifs.Count);
-            //    var randomInt2 = randomIntGenerator.Next(0, motifs.Count);
-            //    var phrase = keys[1].DevelopMotif(motifs[randomInt1], motifs[randomInt2]);
-            //    phrases1.Add(phrase);
-            //}
-            //var phrases1 = new List<List<Tone>>();
-
-            //for (var i = 0; i < phrases.Count; i++)
-            //{
-            //    var randomInt1 = randomIntGenerator.Next(0, phrases.Count);
-            //    var randomInt2 = randomIntGenerator.Next(0, phrases.Count);
-            //    var phrase = keys[0].DevelopMotif(phrases[randomInt1], phrases[randomInt2]);
-            //    phrases.Add(phrase);
-            //}
-
             Console.WriteLine();
             Console.WriteLine("Scale Phrases");
             Console.WriteLine();
 
-            foreach (var phrase in phrases)
+            var phraseLengthOfSection = 8;
+
+            for (var i = 0; i < phraseLengthOfSection; i++)
             {
+                var randomPhraseIndex = randomIntGenerator.Next(0, phrases.Count);
                 Console.WriteLine();
                 Console.WriteLine("Phrase");
                 Console.WriteLine();
-                foreach (var tone in phrase)
+                foreach (var tone in phrases[randomPhraseIndex])
                 {
                     Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
-                    tone.Play(tone.Length);
+                    tone.Play();
                 }
             }
-
-            //Console.WriteLine();
-            //Console.WriteLine("Chord Phrases");
-            //Console.WriteLine();
-
-            //foreach (var phrase in phrases1)
-            //{
-            //    Console.WriteLine();
-            //    Console.WriteLine("Phrase");
-            //    Console.WriteLine();
-            //    foreach (var tone in phrase)
-            //    {
-            //        Console.Write(tone.Note.ToString() + tone.Octave.ToString() + " ");
-            //    }
-            //    Console.WriteLine();
-            //}
-
 
 
             Console.ReadLine();
