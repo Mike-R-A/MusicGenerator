@@ -24,7 +24,10 @@ namespace MusicGenerator
                 Console.WriteLine("Motif Max Size, " + randomMaxSize);
                 var randomStasisInhibitor = randomIntGenerator.Next(0, 5);
                 Console.WriteLine("Motif Stasis Inhibitor, " + randomStasisInhibitor);
-                var motif = Music.Motif(randomLength, randomMaxSize, randomStasisInhibitor);
+                Array noteLengthValues = Enum.GetValues(typeof(NoteLength));
+                NoteLength randomNoteLength = (NoteLength)noteLengthValues.GetValue(randomIntGenerator.Next(noteLengthValues.Length));
+                Console.WriteLine("Most common note length, " + randomNoteLength.ToString());
+                var motif = Music.Motif(randomLength, randomMaxSize, randomStasisInhibitor, mostLikelyNoteLength: randomNoteLength);
 
                 var alteredMotif1 = motif.ModifyMotif(motifs);
                 var alteredMotif2 = motif.ModifyMotif(motifs);

@@ -42,7 +42,7 @@ namespace ConsoleApp1.Model
             return chord;
         }
 
-        public static Motif Motif(int length, int maxSize, int stasisInhibitor = 5, double restChance = 0.01)
+        public static Motif Motif(int length, int maxSize, int stasisInhibitor = 5, double restChance = 0.01, NoteLength mostLikelyNoteLength = NoteLength.Crotchet)
         {
             var motif = new Motif();
             var randomIntGenerator = new Random();
@@ -52,7 +52,7 @@ namespace ConsoleApp1.Model
             var nextIndex = randomPitch;
             int lastIndex = randomPitch;
             motif.Pitches.Add(nextIndex);
-            motif.Rhythm.Add(RandomNoteLength());
+            motif.Rhythm.Add(RandomNoteLength(mostLikelyNoteLength));
             for (var i = 0; i < length; i++)
             {
                 if (nextIndex != -1)
@@ -78,17 +78,17 @@ namespace ConsoleApp1.Model
                 }
                 
                 motif.Pitches.Add(nextIndex);
-                motif.Rhythm.Add(RandomNoteLength());
+                motif.Rhythm.Add(RandomNoteLength(mostLikelyNoteLength));
             }
 
             return motif;
         }
 
-        public static NoteLength RandomNoteLength()
+        public static NoteLength RandomNoteLength(NoteLength? mostLikelyNoteLength = null, int likelyFactor = 4)
         {
             const int noOfNoteLengths = 8;
             var randomIntGenerator = new Random();
-            var randomNoteLengthSelector = randomIntGenerator.Next(0, noOfNoteLengths);
+            var randomNoteLengthSelector = randomIntGenerator.Next(0, noOfNoteLengths + likelyFactor);
             switch (randomNoteLengthSelector)
             {
                 case 0:
@@ -125,7 +125,7 @@ namespace ConsoleApp1.Model
                 }
                 default:
                 {
-                    return NoteLength.Crotchet;
+                    return mostLikelyNoteLength ?? NoteLength.Crotchet;
                 }
             }
         }
