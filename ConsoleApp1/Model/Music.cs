@@ -235,11 +235,11 @@ namespace ConsoleApp1.Model
                     int? octaveToUse;
                     if (octave < Sound.MinOctave)
                     {
-                        octaveToUse = octave + 1;
+                        octaveToUse = Sound.MinOctave;
                     }
                     else if (octave > Sound.MaxOctave)
                     {
-                        octaveToUse = octave + 1;
+                        octaveToUse = Sound.MaxOctave;
                     }
                     else
                     {
