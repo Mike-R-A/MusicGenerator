@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NAudio.CoreAudioApi;
 
 namespace ConsoleApp1.Model
 {
@@ -85,13 +86,21 @@ namespace ConsoleApp1.Model
         public static List<Tone> KeyRange(this List<Note> key, int noOfRepeats)
         {
             var keyRange = new List<Tone>();
+            var octave = 0;
             for (var i = 0; i < noOfRepeats; i++)
             {
-                keyRange.AddRange(key.Select(n => new Tone
+                foreach (var note in key)
                 {
-                    Note = n,
-                    Octave = i
-                }));
+                    if (note == Note.C)
+                    {
+                        octave++;
+                    }
+                    keyRange.Add(new Tone
+                    {
+                        Note = note,
+                        Octave = octave
+                    });
+                }
             }
 
             return keyRange;
