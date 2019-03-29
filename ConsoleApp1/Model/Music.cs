@@ -234,7 +234,7 @@ namespace ConsoleApp1.Model
                     var octave = keyRange[translatedMotif.Pitches[i]].Octave;
                     var octaveToUse = octave <= Sound.MaxOctave ? octave : octave - 1;
                     tone.Note = keyRange[translatedMotif.Pitches[i]].Note;
-                    tone.Octave = octave;
+                    tone.Octave = octaveToUse;
                 }
                 tone.Length = motif.Rhythm[i];
                 appliedMotif.Add(tone);
